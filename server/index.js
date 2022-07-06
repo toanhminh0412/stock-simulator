@@ -46,11 +46,11 @@ app.get("/stock-info", (req, res) => {
 
           finnhubClient.companyNews(stock, startDate.toLocaleDateString(), endDate.toLocaleDateString(), (error, newsData, response) => {
             console.log(newsData)
-            let newsArray = new Array(5);
+            let newsArray = [];
             let newsLength = 0;
-            newsArray.length > newsData.length ? newsLength = newsData.length : newsLength = 5;
+            5 > newsData.length ? newsLength = newsData.length : newsLength = 5;
             for (let i = 0; i < newsLength; i++) {
-              newsArray[i] = newsData[i];
+              newsArray.push(newsData[i]);
             }
             stockData.news = newsArray;
             res.status(200).send({stockData: stockData})
