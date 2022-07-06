@@ -19,7 +19,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 // Get stock info from FINNHUB
 app.get("/stock-info", (req, res) => {
     const stock = req.query.stockName;
-    console.log(stock)
+    // console.log(stock)
     let stockData = {}
     finnhubClient.quote(stock, (error, quoteData, response) => {
       // console.log("Quote Data:")
@@ -44,10 +44,10 @@ app.get("/stock-info", (req, res) => {
           let startDate = new Date(endDate.getTime() - 30*24*60*60*1000);
           startDateStr = `${startDate.getFullYear()}-${startDate.getMonth() + 1 < 10 ? "0": ""}${startDate.getMonth() + 1}-${startDate.getDate() < 10 ? "0": ""}${startDate.getDate()}`
           endDateStr = `${endDate.getFullYear()}-${endDate.getMonth() + 1 < 10 ? "0": ""}${endDate.getMonth() + 1}-${endDate.getDate() < 10 ? "0": ""}${endDate.getDate() + 1}`
-          console.log("startDateStr: " + startDateStr)
-          console.log("endDateStr: " + endDateStr)
+          // console.log("startDateStr: " + startDateStr)
+          // console.log("endDateStr: " + endDateStr)
           finnhubClient.companyNews(stock, startDateStr, endDateStr, (error, newsData, response) => {
-            console.log("newsData: " + newsData)
+            // console.log("newsData: " + newsData)
             let newsArray = [];
             let newsLength = 0;
             5 > newsData.length ? newsLength = newsData.length : newsLength = 5;
@@ -62,6 +62,14 @@ app.get("/stock-info", (req, res) => {
     });
     
 
+})
+
+app.get("/single-stock-info", (req, res) => {
+  const stock = req.query.stock;
+  // console.log(stock)
+  finnhubClient.quote(stock, (error, quoteData, response) => {
+    res.status(200).send({price: quoteData.c})
+  })
 })
 
 // All other GET requests not handled before will return our React app

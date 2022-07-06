@@ -5,9 +5,13 @@ import axios from "axios"
 import Nav from './Nav';
 
 function StockInfo() {
+    let {stockName} = useParams();
     const [stockData, setStockData] = useState(null)
     const [stockFound, setStockFound] = useState(false);
-    let {stockName} = useParams();
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [buyNum, setBuyNum] = useState(0)
+    const [buyMessage, setBuyMessage] = useState("");
+    
 
     useEffect(() => {
         setStockFound(false)
@@ -26,6 +30,33 @@ function StockInfo() {
             console.log(error);
         })
     }, [stockName])
+
+    const onBuyNumChange = e => {
+        setBuyNum(e.target.value)
+    }
+
+    const buyStock = () => {
+        let portfolio = JSON.parse(window.localStorage.getItem("ASSportfolio"))
+        if (portfolio === null) {
+            portfolio = []
+        }
+        portfolio.push({
+            name: stockName,
+            priceBought: stockData.currentPrice,
+            numBought: buyNum
+        })
+        window.localStorage.setItem("ASSportfolio", JSON.stringify(portfolio));
+        let budget = window.localStorage.getItem("ASSbudget");
+        if (budget === null) {
+            budget = 100000
+        }
+        budget = budget - buyNum * stockData.currentPrice;
+        window.localStorage.setItem("ASSbudget", budget);
+        const numBought = buyNum
+        setBuyMessage(`Successfully bought ${numBought} shares of ${stockName}`)
+        setBuyNum(0);
+        setShowConfirm(false)
+    }
 
     if (!stockFound) {
         return (
@@ -46,13 +77,13 @@ function StockInfo() {
             <div className="bg-slate-200 w-screen min-h-screen pb-20">
                 <Nav/>
                 <h1 className="text-center text-4xl font-bold pt-6">{stockName.toUpperCase()}</h1>
-                <h1 className={`text-center text-6xl font-medium pt-6 ${stockData.currentPrice > stockData.openPrice ? "text-green-500" : "text-red-500"}`}>{stockData.currentPrice}</h1>
+                <h1 className={`text-center text-6xl font-medium pt-6 ${stockData.currentPrice > stockData.openPrice ? "text-green-500" : "text-red-500"}`}>{stockData.currentPrice.toFixed(2)}</h1>
                 <h2 className={`text-center text-5xl font-medium pt-2 ${stockData.currentPrice > stockData.openPrice ? "text-green-500" : "text-red-500"}`}>{((stockData.currentPrice - stockData.openPrice) / stockData.openPrice * 100).toFixed(2)} %</h2>
                 <div className="flex flex-row w-full lg:w-10/12 xl:w-8/12 mx-auto mt-12 text-xl lg:text-2xl">
                     <div className="flex flex-col w-1/2">
                         <div className="w-fit mx-auto">
-                            <div className="mt-2 py-2 border-b border-black">Current: <span className="font-bold">{stockData.currentPrice}</span></div>
-                            <div className="mt-2 py-2 border-b border-black">Open: <span className="font-bold">{stockData.openPrice}</span></div>
+                            <div className="mt-2 py-2 border-b border-black">Current: <span className="font-bold">{stockData.currentPrice.toFixed(2)}</span></div>
+                            <div className="mt-2 py-2 border-b border-black">Open: <span className="font-bold">{stockData.openPrice.toFixed}</span></div>
                             <div className="mt-2 py-2 border-b border-black">Previous Close: <span className="font-bold">{stockData.previousPrice}</span></div>
                             <div className="mt-2 py-2 border-b border-black">High: <span className="font-bold">{stockData.highPrice}</span></div>
                             <div className="mt-2 py-2 border-b border-black">Low: <span className="font-bold">{stockData.lowPrice}</span></div>
@@ -69,11 +100,24 @@ function StockInfo() {
                     </div>
                 </div>
                 <div className="w-full lg:w-10/12 xl:w-8/12 mx-auto mt-12">
-                    <p className="text-xl font-medium">Buy {stockName} stock (Enter number of {stockName} stocks you want to buy):</p>
+                    <p className="text-xl font-medium">Buy {stockName} stock (Enter number of {stockName} shares you want to buy):</p>
                     <div className="flex flex-row mt-2">
-                        <input className="px-3 py-1 text-lg border border-slate-500 shadow-sm shadow-slate-500 w-fit h-fit rounded-sm" type="number" placeholder="Enter number of stocks"></input>
-                        <div className="px-3 py-1 text-lg border border-slate-500 shadow-sm shadow-slate-500 font-medium w-fit rounded-sm bg-blue-500 hover:bg-blue-900 active:bg-blue-900 text-white duration-200 cursor-default">Buy</div>
+                        <input className="px-3 py-1 text-lg border border-slate-500 shadow-sm shadow-slate-500 w-fit h-fit rounded-sm" type="number" placeholder="Enter number of shares" value={buyNum} onChange={onBuyNumChange}></input>
+                        <div className="px-3 py-1 text-lg border border-slate-500 shadow-sm shadow-slate-500 font-medium w-fit rounded-sm bg-blue-500 hover:bg-blue-900 active:bg-blue-900 text-white duration-200 cursor-default" onClick={() => {if (buyNum > 0) {setShowConfirm(true)}; setBuyMessage("")}}>Buy</div>
                     </div>
+                    {buyNum > 0 && showConfirm && buyMessage === "" ? (
+                    <div className="text-xl font-medium mt-4">
+                        <p>Please confirm that you want to buy {buyNum} {stockName} shares</p>
+                        <div className="flex flex-row">
+                            <div className="mt-2 px-3 py-1 text-lg border border-slate-500 shadow-sm shadow-slate-500 font-medium w-fit rounded-sm bg-indigo-700 hover:bg-indigo-900 active:bg-indigo-900 text-white duration-200 cursor-default mr-4" onClick={() => {setShowConfirm(false)}}>Cancel</div>
+                            <div className="mt-2 px-3 py-1 text-lg border border-slate-500 shadow-sm shadow-slate-500 font-medium w-fit rounded-sm bg-indigo-700 hover:bg-indigo-900 active:bg-indigo-900 text-white duration-200 cursor-default" onClick={() => {buyStock()}}>Confirm</div>
+                        </div>
+                    </div>) : (<div></div>)}
+                    {buyMessage !== "" ? (
+                        <div className="text-xl font-medium mt-4">
+                            {buyMessage}
+                        </div>
+                    ) : (<div></div>)}
                 </div>
                 <div className="w-full lg:w-10/12 xl:w-8/12 mx-auto mt-12">
                     <h1 className="font-bold text-3xl">Company News</h1>
