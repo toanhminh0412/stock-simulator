@@ -2,9 +2,11 @@ const path = require('path');
 const express = require("express");
 const finnhub = require("finnhub");
 
+require('dotenv').config()
+
 // Authentication with Finnhub
 const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-api_key.apiKey = "cb2pjrqad3i3uh8vif4g"
+api_key.apiKey = process.env.FINNHUB_API_KEY
 const finnhubClient = new finnhub.DefaultApi()
 
 const PORT = process.env.PORT || 3001;
