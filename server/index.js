@@ -42,9 +42,10 @@ app.get("/stock-info", (req, res) => {
 
           let endDate = new Date();
           let startDate = new Date(endDate.getTime() - 30*24*60*60*1000);
-
+          console.log("endDate: " + endDate.toLocaleDateString())
+          console.log("startDate: " + startDate.toLocaleDateString())
           finnhubClient.companyNews(stock, startDate.toLocaleDateString(), endDate.toLocaleDateString(), (error, newsData, response) => {
-            console.log(newsData)
+            console.log("newsData: " + newsData)
             let newsArray = [];
             let newsLength = 0;
             5 > newsData.length ? newsLength = newsData.length : newsLength = 5;
