@@ -41,8 +41,7 @@ app.get("/stock-info", (req, res) => {
           stockData.dividend = financialData.metric.dividendPerShareAnnual
 
           let endDate = new Date();
-          let startDate = new Date(endDate);
-          startDate.setDate(startDate.getDate() - 30);
+          let startDate = new Date(endDate.getTime() - 30*24*60*60*1000);
 
           finnhubClient.companyNews(stock, startDate.toLocaleDateString(), endDate.toLocaleDateString(), (error, newsData, response) => {
             console.log(newsData)
