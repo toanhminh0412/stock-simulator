@@ -19,6 +19,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 // Get stock info from FINNHUB
 app.get("/stock-info", (req, res) => {
     const stock = req.query.stockName;
+    console.log(stock)
     let stockData = {}
     finnhubClient.quote(stock, (error, quoteData, response) => {
       // console.log("Quote Data:")
@@ -44,7 +45,7 @@ app.get("/stock-info", (req, res) => {
           startDate.setDate(startDate.getDate() - 30);
 
           finnhubClient.companyNews(stock, startDate.toLocaleDateString(), endDate.toLocaleDateString(), (error, newsData, response) => {
-            // console.log(newsData)
+            console.log(newsData)
             let newsArray = new Array(5);
             let newsLength = 0;
             newsArray.length > newsData.length ? newsLength = newsData.length : newsLength = 5;
