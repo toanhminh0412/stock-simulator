@@ -43,7 +43,7 @@ function StockInfo() {
         )
     } else {
         return (
-            <div className="bg-slate-200 w-screen min-h-screen">
+            <div className="bg-slate-200 w-screen min-h-screen pb-20">
                 <Nav/>
                 <h1 className="text-center text-4xl font-bold pt-6">{stockName.toUpperCase()}</h1>
                 <h1 className={`text-center text-6xl font-medium pt-6 ${stockData.currentPrice > stockData.openPrice ? "text-green-500" : "text-red-500"}`}>{stockData.currentPrice}</h1>
@@ -66,6 +66,13 @@ function StockInfo() {
                             <div className="mt-2 py-2 border-b border-black">Current Ratio: <span className="font-bold">{stockData.currentRatio}</span></div>
                             <div className="mt-2 py-2 border-b border-black">Dividend: <span className="font-bold">{stockData.dividend}</span></div>
                         </div>
+                    </div>
+                </div>
+                <div className="w-full lg:w-10/12 xl:w-8/12 mx-auto mt-12">
+                    <p className="text-xl font-medium">Buy {stockName} stock (Enter number of {stockName} stocks you want to buy):</p>
+                    <div className="flex flex-row mt-2">
+                        <input className="px-3 py-1 text-lg border border-slate-500 shadow-sm shadow-slate-500 w-fit h-fit rounded-sm" type="number" placeholder="Enter number of stocks"></input>
+                        <div className="px-3 py-1 text-lg border border-slate-500 shadow-sm shadow-slate-500 font-medium w-fit rounded-sm bg-blue-500 hover:bg-blue-900 active:bg-blue-900 text-white duration-200 cursor-default">Buy</div>
                     </div>
                 </div>
                 <div className="w-full lg:w-10/12 xl:w-8/12 mx-auto mt-12">

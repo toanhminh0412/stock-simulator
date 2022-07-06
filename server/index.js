@@ -42,9 +42,11 @@ app.get("/stock-info", (req, res) => {
 
           let endDate = new Date();
           let startDate = new Date(endDate.getTime() - 30*24*60*60*1000);
-          console.log("endDate: " + endDate.toLocaleDateString())
-          console.log("startDate: " + startDate.toLocaleDateString())
-          finnhubClient.companyNews(stock, startDate.toLocaleDateString(), endDate.toLocaleDateString(), (error, newsData, response) => {
+          startDateStr = `${startDate.getFullYear()}-${startDate.getMonth() + 1 < 10 ? "0": ""}${startDate.getMonth() + 1}-${startDate.getDate() < 10 ? "0": ""}${startDate.getDate()}`
+          endDateStr = `${endDate.getFullYear()}-${endDate.getMonth() + 1 < 10 ? "0": ""}${endDate.getMonth() + 1}-${endDate.getDate() < 10 ? "0": ""}${endDate.getDate() + 1}`
+          console.log("startDateStr: " + startDateStr)
+          console.log("endDateStr: " + endDateStr)
+          finnhubClient.companyNews(stock, startDateStr, endDateStr, (error, newsData, response) => {
             console.log("newsData: " + newsData)
             let newsArray = [];
             let newsLength = 0;
