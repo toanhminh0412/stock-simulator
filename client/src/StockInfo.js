@@ -18,7 +18,7 @@ function StockInfo() {
             }
         })
         .then(res => {
-            // console.log(res.data);
+            console.log(res.data);
             setStockFound(true)
             setStockData(res.data.stockData);
         })
