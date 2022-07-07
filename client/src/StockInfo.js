@@ -36,7 +36,7 @@ function StockInfo() {
     }
 
     const buyStock = () => {
-        let budget = parseInt(window.localStorage.getItem("ASSbudget"));
+        let budget = parseFloat(window.localStorage.getItem("ASSbudget"));
         if (budget === null) {
             budget = 100000
         }

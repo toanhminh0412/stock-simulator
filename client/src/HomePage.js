@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react'
 import Nav from './Nav'
 
 function HomePage() {
-  const [budget, setBudget] = useState(window.localStorage.getItem("ASSbudget") !== null ? parseInt(window.localStorage.getItem("ASSbudget")) : 100000)
+  const [budget, setBudget] = useState(window.localStorage.getItem("ASSbudget") !== null ? parseFloat(window.localStorage.getItem("ASSbudget")) : 100000)
   const [totalValue, setTotalValue] = useState(0);
   const [portfolio, setPortfolio] = useState(null)
   const [viewOption, setViewOption] = useState("share");
@@ -58,11 +58,11 @@ function HomePage() {
   const sellStock = stock => {
     setError("")
     if (stock.id === sellingStock.stockId) {
-      if (sellingStock.stockNum > parseInt(stock.numBought)) {
+      if (sellingStock.stockNum > parseFloat(stock.numBought)) {
         setError(`You only own ${stock.numBought} shares of ${stock.name}`)
       } else {
         let newBudget = budget;
-        newBudget = newBudget + parseInt(sellingStock.stockNum) * parseInt(stock.currentPrice);
+        newBudget = newBudget + parseFloat(sellingStock.stockNum) * parseFloat(stock.currentPrice);
         setBudget(newBudget);
         window.localStorage.setItem("ASSbudget", newBudget);
         let newPortfolioValue = 0;
@@ -70,15 +70,15 @@ function HomePage() {
         for (let i = 0; i < portfolio.length; i++) {
           if (portfolio[i].id !== stock.id) {
             newPortfolio.push(portfolio[i]);
-            newPortfolioValue = newPortfolioValue + parseInt(portfolio[i].numBought) * parseInt(portfolio[i].currentPrice);
+            newPortfolioValue = newPortfolioValue + parseFloat(portfolio[i].numBought) * parseFloat(portfolio[i].currentPrice);
           } else {
-            const shareLeft = parseInt(portfolio[i].numBought) - sellingStock.stockNum;
+            const shareLeft = parseFloat(portfolio[i].numBought) - sellingStock.stockNum;
             if (shareLeft > 0) {
               const remainingStock = {
                 id: portfolio[i].id,
                 name: portfolio[i].name,
                 numBought: shareLeft,
-                priceBought: parseInt(portfolio[i].priceBought),
+                priceBought: parseFloat(portfolio[i].priceBought),
                 currentPrice: stock.currentPrice
               }
               newPortfolio.push(remainingStock);
@@ -89,6 +89,7 @@ function HomePage() {
         setPortfolio(newPortfolio);
         window.localStorage.setItem("ASSportfolio", JSON.stringify(newPortfolio));
         setTotalValue(newPortfolioValue);
+        setSellingStock({stockNum: 0, stockId: ""})
       }
     } else {
       setError("Number of shares sold is not specified")
