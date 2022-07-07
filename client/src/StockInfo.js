@@ -36,26 +36,33 @@ function StockInfo() {
     }
 
     const buyStock = () => {
-        let portfolio = JSON.parse(window.localStorage.getItem("ASSportfolio"))
-        if (portfolio === null) {
-            portfolio = []
-        }
-        portfolio.push({
-            name: stockName,
-            priceBought: stockData.currentPrice,
-            numBought: buyNum
-        })
-        window.localStorage.setItem("ASSportfolio", JSON.stringify(portfolio));
-        let budget = window.localStorage.getItem("ASSbudget");
+        let budget = parseInt(window.localStorage.getItem("ASSbudget"));
         if (budget === null) {
             budget = 100000
         }
-        budget = budget - buyNum * stockData.currentPrice;
-        window.localStorage.setItem("ASSbudget", budget);
-        const numBought = buyNum
-        setBuyMessage(`Successfully bought ${numBought} shares of ${stockName}`)
-        setBuyNum(0);
-        setShowConfirm(false)
+        if (budget < stockData.currentPrice * buyNum) {
+            setBuyMessage(`You don't have enough budget to buy ${buyNum} shares of ${stockName}`);
+            setBuyNum(0);
+            setShowConfirm(false)
+        } else {
+            let portfolio = JSON.parse(window.localStorage.getItem("ASSportfolio"))
+            if (portfolio === null) {
+                portfolio = []
+            }
+            portfolio.push({
+                id: portfolio.length !== 0 ? portfolio[portfolio.length - 1].id + 1 : 0,
+                name: stockName,
+                priceBought: stockData.currentPrice,
+                numBought: buyNum
+            })
+            window.localStorage.setItem("ASSportfolio", JSON.stringify(portfolio));
+            budget = budget - buyNum * stockData.currentPrice;
+            window.localStorage.setItem("ASSbudget", budget);
+            const numBought = buyNum
+            setBuyMessage(`Successfully bought ${numBought} shares of ${stockName}`)
+            setBuyNum(0);
+            setShowConfirm(false)
+        }
     }
 
     if (!stockFound) {
@@ -83,7 +90,7 @@ function StockInfo() {
                     <div className="flex flex-col w-1/2">
                         <div className="w-fit mx-auto">
                             <div className="mt-2 py-2 border-b border-black">Current: <span className="font-bold">{stockData.currentPrice.toFixed(2)}</span></div>
-                            <div className="mt-2 py-2 border-b border-black">Open: <span className="font-bold">{stockData.openPrice.toFixed}</span></div>
+                            <div className="mt-2 py-2 border-b border-black">Open: <span className="font-bold">{stockData.openPrice}</span></div>
                             <div className="mt-2 py-2 border-b border-black">Previous Close: <span className="font-bold">{stockData.previousPrice}</span></div>
                             <div className="mt-2 py-2 border-b border-black">High: <span className="font-bold">{stockData.highPrice}</span></div>
                             <div className="mt-2 py-2 border-b border-black">Low: <span className="font-bold">{stockData.lowPrice}</span></div>
